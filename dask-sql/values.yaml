@@ -1,0 +1,22 @@
+dask:
+  worker:
+    # FIXME: Fill in how many workers you want to spawn
+    replicas: 6
+    env:
+    # Additionally install packages for xgboost and S3 access
+    # FIXME: add additional packages if you want them on the workers
+    - name: EXTRA_CONDA_PACKAGES
+      value: s3fs=0.5.1 dask-xgboost=0.1.11 xgboost=0.90 -c conda-forge
+  jupyter:
+    # We do not need the jupyterhub
+    enabled: false
+
+dask_sql:
+  image:
+    name: nbraun/dask-sql
+    tag: latest
+  env:
+  # Specify additional conda packages to install
+  # FIXME: add additional packages if you want them on the SQL server
+  - name: EXTRA_CONDA_PACKAGES
+    value: s3fs=0.5.1 dask-xgboost=0.1.11 xgboost=0.90 aiobotocore=1.1.2 botocore=1.17.44 -c conda-forge

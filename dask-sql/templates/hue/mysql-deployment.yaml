@@ -1,0 +1,34 @@
+---
+# Hue deployment with a mysql database
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hue-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hue-mysql
+  template:
+    metadata:
+      labels:
+        app: hue-mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        args: ["--init-file", "/data/application/init.sql"]
+        volumeMounts:
+        - name: config
+          mountPath: /data/application/init.sql
+          subPath: init.sql
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: "MYSQL_ROOT_PASSWORD"
+          value: "secret"
+        - name: "MYSQL_DATABASE"
+          value: "hue"
+      volumes:
+      - name: config
+        configMap:
+          name: hue-mysql

@@ -1,0 +1,42 @@
+# dask-sql deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dask-sql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dask-sql
+  template:
+    metadata:
+      labels:
+        app: dask-sql
+    spec:
+      containers:
+      - image: "{{ .Values.dask_sql.image.name }}:{{ .Values.dask_sql.image.tag }}"
+        name: dask-sql
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: dask-sql
+          mountPath: /opt/dask_sql/startup_script.py
+          subPath: run.py
+        env:
+          {{ .Values.dask_sql.env | toYaml | nindent 10 }}
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 90
+          periodSeconds: 20
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 600
+          periodSeconds: 20
+      volumes:
+      - name: dask-sql
+        configMap:
+          name: dask-sql

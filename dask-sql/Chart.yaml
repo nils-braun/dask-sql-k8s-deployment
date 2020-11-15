@@ -1,0 +1,11 @@
+apiVersion: v2
+name: dask-sql
+description: A dask-sql installation with hue and some preloaded data
+type: application
+version: 0.1.0
+appVersion: 0.2.0
+
+dependencies:
+- name: dask
+  version: "4.5.5"
+  repository: https://helm.dask.org/

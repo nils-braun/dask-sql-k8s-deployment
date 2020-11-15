@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hue
+spec:
+  ports:
+  - name: hue
+    port: 8888
+    protocol: TCP
+    targetPort: 8888
+  selector:
+    app: hue
+  type: LoadBalancer

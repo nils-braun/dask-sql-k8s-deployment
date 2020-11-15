@@ -1,0 +1,5 @@
+Wait for the deployment to be finished and run:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/hue 8888:8888
+
+Then visit "http://localhost:8888"

@@ -1,0 +1,60 @@
+# Hue deployment with a mysql database
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hue
+  template:
+    metadata:
+      labels:
+        app: hue
+    spec:
+      containers:
+      - name: hue
+        image: gethue/hue:latest
+        ports:
+        - containerPort: 8888
+          protocol: TCP
+        volumeMounts:
+        - name: config
+          mountPath: /usr/share/hue/desktop/conf/z-hue.ini
+          subPath: hue.ini
+        imagePullPolicy: IfNotPresent
+        readinessProbe:
+          tcpSocket:
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8888
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      initContainers:
+      # Wait for the mysql database to be online
+      - name: wait-for-mysql
+        image: subfuzion/netcat
+        command: ["/bin/sh", "-c"]
+        args:
+        - >
+          echo "Starting"
+          set -x;
+          while true; do
+            echo "Sleeping";
+            nc -v -z -w 3 hue-mysql 3306
+            WAITFORIT_result=$?
+            echo $WAITFORIT_result
+            if [[ $WAITFORIT_result -eq 0 ]]; then
+              break;
+            fi
+            sleep 5;
+          done
+      volumes:
+      - name: config
+        configMap:
+          name: hue

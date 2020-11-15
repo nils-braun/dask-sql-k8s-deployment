@@ -1,0 +1,8 @@
+# Configmap for the startup file
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dask-sql
+data:
+  run.py: |-
+    {{ .Files.Get "files/run.py" |  nindent 4 }}
