@@ -34,7 +34,7 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 8080
-          initialDelaySeconds: 600
+          initialDelaySeconds: {{ .Values.dask_sql.probeDelay }}
           periodSeconds: 20
       volumes:
       - name: dask-sql
