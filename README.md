@@ -24,7 +24,7 @@ Then, call
     helm dependency update dask-sql
     helm upgrade --cleanup-on-fail --install dask-sql dask-sql
 
-After the deployment has finished, do a port-forwarding
+After the deployment has finished and all pods are running, do a port-forwarding
 
     kubectl port-forward svc/hue 8888:8888
 
@@ -32,6 +32,12 @@ and access "http://localhost:8888". You should be able to see the "nyc-taxi" tab
 in the presto tab.
 Please note, that the first access to the server triggers some initialization, which might take a couple
 of seconds.
+
+If the `dask-sql` pod is constantly restarting and not getting into running state and the log is stuck at
+
+    Solving environment: ...working... failed with initial frozen solve. Retrying with flexible solve.
+
+try to increase the number `dask_sql.probeDelay` in `dask-sql/values.yaml`.
 
 Now, you can query the data.
 For example, try the following query:
